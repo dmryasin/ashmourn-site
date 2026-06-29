@@ -119,20 +119,42 @@
   .section-tag { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 0.3em; font-size: 12px; text-transform: uppercase; margin: 0 0 8px 40px; }
   .descent h2 { font-size: clamp(26px, 5vw, 40px); margin: 0 0 50px 40px; color: var(--bone); }
 
-  .floor { position: relative; padding: 0 0 46px 40px; }
-  .floor::before { /* node on the thread */
-    content: ""; position: absolute; left: 5px; top: 6px; width: 13px; height: 13px; border-radius: 50%;
+  .floor { position: relative; padding: 0 0 26px 40px; }
+  .floor::before { /* node on the thread — filled when the floor is open */
+    content: ""; position: absolute; left: 5px; top: 9px; width: 13px; height: 13px; border-radius: 50%;
     background: var(--ash); border: 1px solid var(--gold); box-shadow: 0 0 0 4px var(--ash);
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
-  .floor.lit::before { border-color: var(--ember); background: var(--ember); box-shadow: 0 0 12px 2px var(--ember-soft), 0 0 0 4px var(--ash); }
-  .floor .depth { font-family: 'Cinzel', serif; color: var(--bone-dim); letter-spacing: 0.24em; font-size: 12px; text-transform: uppercase; }
-  .floor h3 { font-size: 27px; color: var(--gold); margin: 2px 0 4px; }
-  .floor .sub { color: var(--bone); font-style: italic; }
-  .floor.lit h3 { color: var(--ember); }
+  .floor.open::before { border-color: var(--ember); background: var(--ember); box-shadow: 0 0 12px 2px var(--ember-soft), 0 0 0 4px var(--ash); }
 
-  figure.shot { margin: 18px 0 0; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--shadow); }
+  /* header = a full-width button (keyboard + screen-reader friendly) */
+  .floor-head {
+    display: block; width: 100%; text-align: left; cursor: pointer; position: relative;
+    background: none; border: 0; margin: 0; padding: 2px 40px 2px 0; color: inherit; font: inherit;
+  }
+  .floor-head .depth { display: block; font-family: 'Cinzel', serif; color: var(--bone-dim); letter-spacing: 0.24em; font-size: 12px; text-transform: uppercase; }
+  .floor-head .fname { display: block; font-family: 'Cinzel', serif; font-weight: 900; font-size: 27px; line-height: 1.1; color: var(--gold); margin: 2px 0 4px; transition: color .2s ease; }
+  .floor-head .sub { display: block; color: var(--bone); font-style: italic; margin: 0; }
+  .floor.open .floor-head .fname, .floor-head:hover .fname, .floor-head:focus-visible .fname { color: var(--ember); }
+
+  /* +/– indicator */
+  .floor-head .toggle { position: absolute; right: 0; top: 7px; width: 22px; height: 22px; color: var(--gold); opacity: .6; transition: opacity .2s ease; }
+  .floor-head:hover .toggle { opacity: 1; }
+  .floor.open .toggle { color: var(--ember); opacity: 1; }
+  .floor-head .toggle::before, .floor-head .toggle::after { content: ""; position: absolute; left: 50%; top: 50%; background: currentColor; border-radius: 1px; }
+  .floor-head .toggle::before { width: 14px; height: 1.5px; transform: translate(-50%, -50%); }
+  .floor-head .toggle::after  { width: 1.5px; height: 14px; transform: translate(-50%, -50%); transition: transform .28s ease, opacity .2s ease; }
+  .floor.open .toggle::after  { transform: translate(-50%, -50%) scaleY(0); opacity: 0; }
+
+  /* collapsible body — grid-rows trick animates from 0 to content height */
+  .floor-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .38s ease; }
+  .floor.open .floor-body { grid-template-rows: 1fr; }
+  .floor-body > .inner { min-height: 0; overflow: hidden; }
+
+  figure.shot { margin: 16px 0 4px; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--shadow); }
   figure.shot img { display: block; width: 100%; height: auto; }
   figcaption { font-size: 14px; color: var(--bone-dim); padding: 8px 12px; font-style: italic; }
+  @media (prefers-reduced-motion: reduce) { .floor-body, .floor::before, .floor-head .toggle::after { transition: none; } }
 
   /* ===== THE LOOP — what you carry back up ===== */
   .loop { padding: 70px 0; border-top: 1px solid var(--rule); }
@@ -191,64 +213,94 @@
       <p class="section-tag reveal">The Descent</p>
       <h2 class="reveal">Five floors. One way &mdash; down.</h2>
 
-      <article class="floor lit reveal">
-        <p class="depth">Floor I</p>
-        <h3>Cinderdeep</h3>
-        <p class="sub">The Forsaken Halls &mdash; molten stone and lava fissures that open underfoot.</p>
-        <figure class="shot">
-          <img src="./img/cinderdeep.png" alt="Combat in Cinderdeep: the player stands amid glowing lava fissures as embers rise, an enemy closing in." loading="lazy" />
-          <figcaption>Cinderdeep &mdash; read the room, then move.</figcaption>
-        </figure>
+      <article class="floor open reveal">
+        <button class="floor-head" type="button" aria-expanded="true" aria-controls="floor-1">
+          <span class="depth">Floor I</span>
+          <span class="fname">Cinderdeep</span>
+          <span class="sub">The Forsaken Halls &mdash; molten stone and lava fissures that open underfoot.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-1"><div class="inner">
+          <figure class="shot">
+            <img src="./img/cinderdeep.png" alt="Combat in Cinderdeep: the player stands amid glowing lava fissures as embers rise, an enemy closing in." loading="lazy" />
+            <figcaption>Cinderdeep &mdash; read the room, then move.</figcaption>
+          </figure>
+        </div></div>
       </article>
 
       <article class="floor reveal">
-        <p class="depth">Floor II</p>
-        <h3>Palemire</h3>
-        <p class="sub">The drowned, fog-choked deep, where sound arrives late.</p>
-        <figure class="shot">
-          <img src="./img/palemire.png" alt="Palemire: a dark, teal-lit drowned chamber, the player flanked by enemies." loading="lazy" />
-          <figcaption>Palemire &mdash; the deep keeps what it takes.</figcaption>
-        </figure>
+        <button class="floor-head" type="button" aria-expanded="false" aria-controls="floor-2">
+          <span class="depth">Floor II</span>
+          <span class="fname">Palemire</span>
+          <span class="sub">The drowned, fog-choked deep, where sound arrives late.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-2"><div class="inner">
+          <figure class="shot">
+            <img src="./img/palemire.png" alt="Palemire: a dark, teal-lit drowned chamber, the player flanked by enemies." loading="lazy" />
+            <figcaption>Palemire &mdash; the deep keeps what it takes.</figcaption>
+          </figure>
+        </div></div>
       </article>
 
       <article class="floor reveal">
-        <p class="depth">Floor III</p>
-        <h3>Gilthollow</h3>
-        <p class="sub">Gilded ruin. Everything here was paid for once, and is owed again.</p>
-        <figure class="shot">
-          <img src="./img/gilthollow.png" alt="Gilthollow: a gold-lit hall swarmed by a horde of enemies closing on the player." loading="lazy" />
-          <figcaption>Gilthollow &mdash; a debt collected all at once.</figcaption>
-        </figure>
+        <button class="floor-head" type="button" aria-expanded="false" aria-controls="floor-3">
+          <span class="depth">Floor III</span>
+          <span class="fname">Gilthollow</span>
+          <span class="sub">Gilded ruin. Everything here was paid for once, and is owed again.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-3"><div class="inner">
+          <figure class="shot">
+            <img src="./img/gilthollow.png" alt="Gilthollow: a gold-lit hall swarmed by a horde of enemies closing on the player." loading="lazy" />
+            <figcaption>Gilthollow &mdash; a debt collected all at once.</figcaption>
+          </figure>
+        </div></div>
       </article>
 
       <article class="floor reveal">
-        <p class="depth">Floor IV</p>
-        <h3>Duskspire</h3>
-        <p class="sub">Spire-shadows and a silence that watches back.</p>
-        <figure class="shot">
-          <img src="./img/duskspire.png" alt="Duskspire: a violet-shadowed room with a spinning saw hazard and scattered foes." loading="lazy" />
-          <figcaption>Duskspire &mdash; the dark is not empty.</figcaption>
-        </figure>
+        <button class="floor-head" type="button" aria-expanded="false" aria-controls="floor-4">
+          <span class="depth">Floor IV</span>
+          <span class="fname">Duskspire</span>
+          <span class="sub">Spire-shadows and a silence that watches back.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-4"><div class="inner">
+          <figure class="shot">
+            <img src="./img/duskspire.png" alt="Duskspire: a violet-shadowed room with a spinning saw hazard and scattered foes." loading="lazy" />
+            <figcaption>Duskspire &mdash; the dark is not empty.</figcaption>
+          </figure>
+        </div></div>
       </article>
 
-      <article class="floor lit reveal">
-        <p class="depth">Floor V</p>
-        <h3>Sunmourn</h3>
-        <p class="sub">The last light &mdash; where the false dawn waits, and calls itself morning.</p>
-        <figure class="shot">
-          <img src="./img/sunmourn.png" alt="Sunmourn: a wide, fire-lit final chamber crowded with enemies under a sickly glow." loading="lazy" />
-          <figcaption>Sunmourn &mdash; the last floor before the door.</figcaption>
-        </figure>
+      <article class="floor reveal">
+        <button class="floor-head" type="button" aria-expanded="false" aria-controls="floor-5">
+          <span class="depth">Floor V</span>
+          <span class="fname">Sunmourn</span>
+          <span class="sub">The last light &mdash; where the false dawn waits, and calls itself morning.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-5"><div class="inner">
+          <figure class="shot">
+            <img src="./img/sunmourn.png" alt="Sunmourn: a wide, fire-lit final chamber crowded with enemies under a sickly glow." loading="lazy" />
+            <figcaption>Sunmourn &mdash; the last floor before the door.</figcaption>
+          </figure>
+        </div></div>
       </article>
 
-      <article class="floor lit reveal">
-        <p class="depth">The Warden</p>
-        <h3>The False Dawn</h3>
-        <p class="sub">It calls itself morning. It is the last thing between you and the way out.</p>
-        <figure class="shot">
-          <img src="./img/boss.png" alt="Boss fight: THE FALSE DAWN, its health bar across the top, telegraphed area attacks blooming around the player." loading="lazy" />
-          <figcaption>The False Dawn &mdash; break it, and the door opens.</figcaption>
-        </figure>
+      <article class="floor reveal">
+        <button class="floor-head" type="button" aria-expanded="false" aria-controls="floor-6">
+          <span class="depth">The Warden</span>
+          <span class="fname">The False Dawn</span>
+          <span class="sub">It calls itself morning. It is the last thing between you and the way out.</span>
+          <span class="toggle" aria-hidden="true"></span>
+        </button>
+        <div class="floor-body" id="floor-6"><div class="inner">
+          <figure class="shot">
+            <img src="./img/boss.png" alt="Boss fight: THE FALSE DAWN, its health bar across the top, telegraphed area attacks blooming around the player." loading="lazy" />
+            <figcaption>The False Dawn &mdash; break it, and the door opens.</figcaption>
+          </figure>
+        </div></div>
       </article>
     </div>
   </section>
@@ -332,6 +384,18 @@
       entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
     }, { rootMargin: '0px 0px -10% 0px' });
     els.forEach(function (el) { io.observe(el); });
+  })();
+
+  // ---- Descent accordion: each floor expands on click / Enter / Space ----
+  (function () {
+    var heads = document.querySelectorAll('.floor-head');
+    heads.forEach(function (head) {
+      head.addEventListener('click', function () {
+        var floor = head.closest('.floor');
+        var nowOpen = floor.classList.toggle('open');
+        head.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+      });
+    });
   })();
 </script>
 </body>
