@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ASHMOURN — a hand-crafted 2D roguelike</title>
-<meta name="description" content="ASHMOURN is a hand-crafted 2D roguelike of relentless combat and deep build-craft. Parry, dash and unleash god-given boons across five cursed biomes that reshape every run." />
+<title>ASHMOURN — Death is not the wall. It is the door.</title>
+<meta name="description" content="A hand-crafted 2D roguelike. A dying underworld remakes itself each time you fall, and every death feeds the descent that follows. Parry, dash, and break the false dawn." />
 
-<!-- Open Graph / social cards -->
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ASHMOURN" />
 <meta property="og:description" content="Death is not the wall — it is the door. A hand-crafted 2D roguelike of relentless combat and deep build-craft." />
@@ -15,221 +14,299 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
 <style>
+  /* ============================================================
+     ASHMOURN — a descent.
+     One bold element: the ember-lit thread you fall along.
+     Everything else stays quiet and disciplined.
+     ============================================================ */
   :root {
-    --gold: #d4a55a;
-    --gold-bright: #f0c674;
-    --ink: #0a0510;
-    --ink-2: #140b1c;
-    --ink-3: #1c1226;
-    --text: #e8dccb;
-    --muted: #a88a5e;
-    --ember: #ff6a3d;
-    --max: 1120px;
+    --ash:    #0b0710;   /* near-black, faint violet cast */
+    --shadow: #060409;
+    --ember:  #e0592b;   /* the one bold accent — fire, used sparingly */
+    --ember-soft: rgba(224,89,43,0.5);
+    --gold:   #c89b5a;   /* the mark */
+    --bone:   #d8cdbb;   /* body text */
+    --bone-dim: #8c8071;
+    --rule:   rgba(200,155,90,0.18);
+    --shaft: 720px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
-    background: var(--ink);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    line-height: 1.6;
+    background: var(--ash);
+    color: var(--bone);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 19px; line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  h1, h2, h3, .display { font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
-  a { color: var(--gold-bright); text-decoration: none; }
-  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
-  .section { padding: 88px 0; }
-  .eyebrow { color: var(--gold); font-size: 13px; letter-spacing: 0.32em; text-transform: uppercase; margin-bottom: 14px; }
-
-  /* ===== HERO ===== */
-  .hero {
-    position: relative;
-    min-height: 92vh;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center;
+  /* deep vignette so the shaft feels lit from within */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(ellipse 70% 55% at 50% 38%, rgba(212,165,90,0.16), transparent 70%),
-      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255,106,61,0.12), transparent 70%),
-      linear-gradient(180deg, #06030b 0%, var(--ink) 55%, #06030b 100%);
-    overflow: hidden;
+      radial-gradient(ellipse 60% 50% at 50% -5%, rgba(224,89,43,0.10), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% 108%, rgba(224,89,43,0.08), transparent 60%),
+      radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, var(--shadow) 100%);
   }
-  .hero::after {
-    content: ""; position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 50% 50%, rgba(212,165,90,0.05) 1px, transparent 1px);
-    background-size: 26px 26px; opacity: 0.5; pointer-events: none;
-  }
-  .hero-inner { position: relative; z-index: 2; padding: 24px; }
-  .title {
-    font-size: clamp(56px, 12vw, 132px);
-    font-weight: 900;
-    color: var(--gold);
-    text-shadow: 0 0 40px rgba(212,165,90,0.55), 0 0 8px rgba(212,165,90,0.8);
-    line-height: 1; margin-bottom: 18px;
-  }
-  .tagline {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(16px, 2.6vw, 24px);
-    color: var(--text); font-style: italic; opacity: 0.92; margin-bottom: 10px;
-  }
-  .subtag { color: var(--muted); max-width: 620px; margin: 0 auto 34px; font-size: 16px; }
-  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 15px 30px; border-radius: 6px; font-weight: 600; font-size: 15px;
-    border: 1px solid transparent; transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .btn-primary {
-    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-    color: #1a0f06; box-shadow: 0 6px 28px rgba(212,165,90,0.35);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(212,165,90,0.5); }
-  .btn-ghost { border-color: rgba(212,165,90,0.4); color: var(--gold-bright); }
-  .btn-ghost:hover { border-color: var(--gold); background: rgba(212,165,90,0.08); }
-  .badges { margin-top: 30px; color: var(--muted); font-size: 13px; letter-spacing: 0.06em; }
-  .badges span { margin: 0 8px; }
+  .shaft { position: relative; z-index: 1; max-width: var(--shaft); margin: 0 auto; padding: 0 28px; }
 
-  /* ===== FEATURES ===== */
-  .grid { display: grid; gap: 22px; }
-  .features { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-  .card {
-    background: linear-gradient(180deg, var(--ink-2), var(--ink-3));
-    border: 1px solid rgba(212,165,90,0.16); border-radius: 12px; padding: 26px;
+  a { color: var(--bone); text-decoration: none; }
+  .mark {
+    font-family: 'Cinzel', serif; font-weight: 700; color: var(--gold);
+    letter-spacing: 0.42em; text-transform: uppercase; font-size: 14px;
+    text-indent: 0.42em;
   }
-  .card h3 { color: var(--gold-bright); font-size: 19px; margin-bottom: 8px; }
-  .card p { color: var(--muted); font-size: 15px; }
-  .card .rune { font-size: 26px; margin-bottom: 12px; display: block; }
+  h1, h2, h3 { font-family: 'Cinzel', serif; font-weight: 900; line-height: 1.04; letter-spacing: 0.01em; }
+  .lede { color: var(--bone-dim); font-style: italic; font-size: 21px; }
 
-  h2.section-title { font-size: clamp(28px, 5vw, 40px); color: var(--text); margin-bottom: 12px; }
-  .section-lead { color: var(--muted); max-width: 640px; margin-bottom: 40px; }
+  /* focus + a11y */
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--ember); outline-offset: 4px; border-radius: 2px; }
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--ember); color: #1a0a04; padding: 10px 16px; z-index: 99; }
+  .skip:focus { left: 12px; top: 12px; }
 
-  /* ===== BIOMES ===== */
-  .biomes { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
-  .biome { border-radius: 12px; padding: 24px 22px; border: 1px solid rgba(212,165,90,0.14); position: relative; overflow: hidden; }
-  .biome h3 { font-size: 20px; margin-bottom: 6px; }
-  .biome p { font-size: 14px; color: var(--muted); }
-  .b1 { background: linear-gradient(160deg, #2a0f08, #160a12); }
-  .b1 h3 { color: #ff8a5a; }
-  .b2 { background: linear-gradient(160deg, #0c2018, #0a1014); }
-  .b2 h3 { color: #6fd0a8; }
-  .b3 { background: linear-gradient(160deg, #241c08, #140f08); }
-  .b3 h3 { color: #e8c267; }
-  .b4 { background: linear-gradient(160deg, #160f24, #0c0a16); }
-  .b4 h3 { color: #b292ff; }
-  .b5 { background: linear-gradient(160deg, #241608, #1a0e08); }
-  .b5 h3 { color: #ffb05a; }
-
-  /* ===== GALLERY ===== */
-  .gallery { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-  .shot {
-    aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden;
-    border: 1px solid rgba(212,165,90,0.18); background: #06030b;
-    display: flex; align-items: center; justify-content: center;
+  /* ===== EMBERS — drift UP, against the fall. Decorative, hidden from AT. ===== */
+  .embers { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .embers i {
+    position: absolute; bottom: -12px; width: 3px; height: 3px; border-radius: 50%;
+    background: var(--ember); box-shadow: 0 0 6px 1px var(--ember-soft); opacity: 0;
+    animation: rise linear infinite;
   }
-  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .shot .ph { color: #4a3c2a; font-size: 13px; letter-spacing: 0.1em; }
-
-  /* ===== CTA STRIP ===== */
-  .cta-strip {
-    text-align: center;
-    background:
-      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(255,106,61,0.14), transparent 70%),
-      linear-gradient(180deg, var(--ink-2), var(--ink));
-    border-top: 1px solid rgba(212,165,90,0.16);
-    border-bottom: 1px solid rgba(212,165,90,0.16);
+  @keyframes rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    12%  { opacity: 0.8; }
+    80%  { opacity: 0.5; }
+    100% { transform: translateY(-104vh) translateX(var(--drift,18px)); opacity: 0; }
   }
 
-  footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: 13px; }
-  footer .title-sm { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 0.2em; font-size: 16px; margin-bottom: 8px; }
+  /* ===== HERO — opens with the thesis ===== */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 110px 0 60px; }
+  .hero .mark { display: block; margin-bottom: 40px; animation: rise-in 1s ease both; }
+  .thesis {
+    font-size: clamp(40px, 8.2vw, 92px); color: var(--bone);
+    margin-bottom: 6px; animation: rise-in 1.1s ease 0.12s both;
+  }
+  .thesis em { font-family: 'EB Garamond', serif; font-style: italic; font-weight: 400; color: var(--ember); }
+  .thesis .door { color: var(--gold); }
+  .hero p.intro { max-width: 30em; margin: 30px 0 40px; color: var(--bone); animation: rise-in 1.1s ease 0.24s both; }
+  @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .embers { display: none; }
+    .hero .mark, .thesis, .hero p.intro { animation: none; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+
+  .cta {
+    display: inline-flex; align-items: baseline; gap: 14px;
+    font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    font-size: 14px; color: var(--bone);
+    border: 1px solid var(--ember); padding: 16px 26px;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+  }
+  .cta:hover { background: var(--ember); color: #1a0a04; transform: translateY(-1px); }
+  .cta .arr { color: var(--ember); transition: color .2s ease; }
+  .cta:hover .arr { color: #1a0a04; }
+  .cta-row { animation: rise-in 1.1s ease 0.36s both; }
+
+  /* ===== THE DESCENT — the signature: a lit thread with depth strata ===== */
+  .descent { position: relative; padding: 30px 0 40px; }
+  .descent::before {
+    content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(180deg, transparent, var(--ember-soft) 6%, var(--rule) 30%, var(--rule) 70%, var(--ember-soft) 94%, transparent);
+  }
+  .section-tag { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 0.3em; font-size: 12px; text-transform: uppercase; margin: 0 0 8px 40px; }
+  .descent h2 { font-size: clamp(26px, 5vw, 40px); margin: 0 0 50px 40px; color: var(--bone); }
+
+  .floor { position: relative; padding: 0 0 46px 40px; }
+  .floor::before { /* node on the thread */
+    content: ""; position: absolute; left: 5px; top: 6px; width: 13px; height: 13px; border-radius: 50%;
+    background: var(--ash); border: 1px solid var(--gold); box-shadow: 0 0 0 4px var(--ash);
+  }
+  .floor.lit::before { border-color: var(--ember); background: var(--ember); box-shadow: 0 0 12px 2px var(--ember-soft), 0 0 0 4px var(--ash); }
+  .floor .depth { font-family: 'Cinzel', serif; color: var(--bone-dim); letter-spacing: 0.24em; font-size: 12px; text-transform: uppercase; }
+  .floor h3 { font-size: 27px; color: var(--gold); margin: 2px 0 4px; }
+  .floor .sub { color: var(--bone); font-style: italic; }
+  .floor.lit h3 { color: var(--ember); }
+
+  figure.shot { margin: 18px 0 0; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--shadow); }
+  figure.shot img { display: block; width: 100%; height: auto; }
+  figcaption { font-size: 14px; color: var(--bone-dim); padding: 8px 12px; font-style: italic; }
+
+  /* ===== THE LOOP — what you carry back up ===== */
+  .loop { padding: 70px 0; border-top: 1px solid var(--rule); }
+  .loop h2 { font-size: clamp(26px, 5vw, 40px); margin-bottom: 14px; }
+  .loop > .shaft > p { max-width: 34em; color: var(--bone); margin-bottom: 44px; }
+  .systems { display: grid; gap: 0; }
+  .sys { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 22px 0; border-top: 1px solid var(--rule); }
+  .sys:last-child { border-bottom: 1px solid var(--rule); }
+  .sys dt { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 0.12em; font-size: 17px; }
+  .sys dd { color: var(--bone-dim); }
+  @media (min-width: 640px) { .sys { grid-template-columns: 220px 1fr; gap: 24px; align-items: baseline; } }
+
+  /* combat clause — quiet three-beat */
+  .beats { display: grid; gap: 26px; margin-top: 40px; }
+  @media (min-width: 720px) { .beats { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+  .beat h3 { font-size: 18px; color: var(--bone); letter-spacing: 0.04em; margin-bottom: 6px; }
+  .beat p { font-size: 17px; color: var(--bone-dim); }
+  .beat .b-no { font-family: 'Cinzel', serif; color: var(--ember); font-size: 13px; letter-spacing: 0.2em; }
+
+  /* ===== THE DOOR — final ===== */
+  .door-end { text-align: center; padding: 110px 0 90px; border-top: 1px solid var(--rule); }
+  .door-end h2 { font-size: clamp(44px, 11vw, 120px); color: var(--gold); letter-spacing: 0.06em; margin-bottom: 8px; }
+  .door-end p { color: var(--bone-dim); font-style: italic; margin-bottom: 36px; }
+
+  footer { text-align: center; padding: 40px 0 60px; color: var(--bone-dim); font-size: 14px; }
+  footer .mark { display: inline-block; margin-bottom: 10px; font-size: 12px; }
+  .meta-row { color: var(--bone-dim); font-size: 13px; letter-spacing: 0.04em; margin-top: 26px; }
+  .meta-row span { white-space: nowrap; }
+
+  /* scroll reveal */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
 </style>
 </head>
 <body>
+<a class="skip" href="#descent">Skip to the descent</a>
 
-<!-- ===================== HERO ===================== -->
+<div class="embers" aria-hidden="true"></div>
+
+<!-- ===================== HERO — the thesis ===================== -->
 <header class="hero">
-  <div class="hero-inner">
-    <div class="title">ASHMOURN</div>
-    <p class="tagline">&ldquo;Death is not the wall &mdash; it is the door.&rdquo;</p>
-    <p class="subtag">A hand-crafted 2D roguelike of relentless combat and deep build-craft. Fall, grow stronger, and break the false dawn.</p>
+  <div class="shaft">
+    <span class="mark">Ashmourn</span>
+    <h1 class="thesis">Death is not the&nbsp;wall&nbsp;&mdash;<br>it is the <span class="door">door</span>.</h1>
+    <p class="intro">A hand-crafted 2D roguelike. A dying underworld remakes itself each time you fall, and every death feeds the descent that follows.</p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#" id="steam-link">Wishlist on Steam</a>
-      <a class="btn btn-ghost" href="#features">Learn more</a>
-    </div>
-    <div class="badges">
-      <span>⚔ Parry &amp; dash combat</span>·<span>🗺 5 cursed biomes</span>·<span>🎮 Full controller support</span>·<span>🌐 6 languages</span>
+      <a class="cta" href="#" id="steam-link">Wishlist on Steam <span class="arr">&darr;</span></a>
     </div>
   </div>
 </header>
 
-<!-- ===================== FEATURES ===================== -->
-<section class="section" id="features">
-  <div class="wrap">
-    <div class="eyebrow">What awaits below</div>
-    <h2 class="section-title">Every death feeds the next descent</h2>
-    <p class="section-lead">ASHMOURN remakes itself each time you fall &mdash; new rooms, new hazards, new ambushes &mdash; while the power you carry out makes the next run reach deeper.</p>
-    <div class="grid features">
-      <div class="card"><span class="rune">⚔</span><h3>Combat with teeth</h3><p>Block to soften a blow, or release on the instant of contact for a perfect parry. Dash through danger with invulnerability frames &mdash; spacing is survival.</p></div>
-      <div class="card"><span class="rune">🎲</span><h3>A run that never repeats</h3><p>Procedural floor topologies, run mutators that trade danger for spoils, elite hunts, sieges and hidden bombable rooms.</p></div>
-      <div class="card"><span class="rune">✦</span><h3>Boons of forgotten powers</h3><p>Claim blessings from the old powers below. Stack and chain them into build-defining synergies that turn desperation into dominance.</p></div>
-      <div class="card"><span class="rune">🌑</span><h3>Grow beyond death</h3><p>Spend the Darkness you carry out on permanent upgrades, then raise the Heat to make the underworld bite back for greater rewards.</p></div>
-    </div>
-  </div>
-</section>
+<main>
+  <!-- ===================== THE DESCENT ===================== -->
+  <section class="descent" id="descent">
+    <div class="shaft">
+      <p class="section-tag reveal">The Descent</p>
+      <h2 class="reveal">Five floors. One way &mdash; down.</h2>
 
-<!-- ===================== BIOMES ===================== -->
-<section class="section" style="background:linear-gradient(180deg,var(--ink),#070410);">
-  <div class="wrap">
-    <div class="eyebrow">One descent</div>
-    <h2 class="section-title">Five cursed biomes</h2>
-    <p class="section-lead">Each layer has its own enemies, hazards and identity &mdash; from molten halls to the final, false light.</p>
-    <div class="grid biomes">
-      <div class="biome b1"><h3>Cinderdeep</h3><p>Molten halls and lava fissures.</p></div>
-      <div class="biome b2"><h3>Palemire</h3><p>The drowned, fog-choked deep.</p></div>
-      <div class="biome b3"><h3>Gilthollow</h3><p>Gilded ruin and greed.</p></div>
-      <div class="biome b4"><h3>Duskspire</h3><p>Spire-shadows and silence.</p></div>
-      <div class="biome b5"><h3>Sunmourn</h3><p>The false dawn waits.</p></div>
-    </div>
-  </div>
-</section>
+      <article class="floor lit reveal">
+        <p class="depth">Floor I</p>
+        <h3>Cinderdeep</h3>
+        <p class="sub">The Forsaken Halls &mdash; molten stone and lava fissures that open underfoot.</p>
+        <figure class="shot">
+          <img src="./img/shot1.png" alt="Combat in Cinderdeep: the player stands amid glowing lava fissures as embers rise, an enemy closing in." loading="lazy" />
+          <figcaption>Cinderdeep &mdash; read the room, then move.</figcaption>
+        </figure>
+      </article>
 
-<!-- ===================== GALLERY ===================== -->
-<section class="section">
-  <div class="wrap">
-    <div class="eyebrow">Screens</div>
-    <h2 class="section-title">From the descent</h2>
-    <p class="section-lead">Captured in-engine.</p>
-    <div class="grid gallery" id="gallery">
-      <div class="shot"><img src="./img/shot1.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 1</span>'"></div>
-      <div class="shot"><img src="./img/shot2.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 2</span>'"></div>
-      <div class="shot"><img src="./img/shot3.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 3</span>'"></div>
-      <div class="shot"><img src="./img/shot4.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 4</span>'"></div>
-    </div>
-  </div>
-</section>
+      <article class="floor reveal">
+        <p class="depth">Floor II</p>
+        <h3>Palemire</h3>
+        <p class="sub">The drowned, fog-choked deep, where sound arrives late.</p>
+      </article>
 
-<!-- ===================== CTA ===================== -->
-<section class="section cta-strip">
-  <div class="wrap">
-    <h2 class="section-title">The door is open.</h2>
-    <p class="section-lead" style="margin:0 auto 30px;">Wishlist ASHMOURN and be there when the descent begins.</p>
-    <a class="btn btn-primary" href="#" id="steam-link-2">Wishlist on Steam</a>
-  </div>
-</section>
+      <article class="floor reveal">
+        <p class="depth">Floor III</p>
+        <h3>Gilthollow</h3>
+        <p class="sub">Gilded ruin. Everything here was paid for once, and is owed again.</p>
+      </article>
+
+      <article class="floor reveal">
+        <p class="depth">Floor IV</p>
+        <h3>Duskspire</h3>
+        <p class="sub">Spire-shadows and a silence that watches back.</p>
+      </article>
+
+      <article class="floor lit reveal">
+        <p class="depth">Floor V</p>
+        <h3>Sunmourn</h3>
+        <p class="sub">The last light &mdash; where the false dawn waits, and calls itself morning.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== THE LOOP ===================== -->
+  <section class="loop">
+    <div class="shaft">
+      <p class="section-tag reveal" style="margin-left:0;">The Loop</p>
+      <h2 class="reveal">Every death feeds the next descent.</h2>
+      <p class="reveal">You will fall. ASHMOURN counts on it &mdash; and so should you. What you carry out of the dark becomes the strength that takes the next run deeper.</p>
+
+      <dl class="systems reveal">
+        <div class="sys"><dt>Darkness</dt><dd>The residue of every run. Spend it at the Court on permanent upgrades that persist past death.</dd></div>
+        <div class="sys"><dt>Heat</dt><dd>Provoke the underworld to bite back harder. Steeper danger, richer spoils &mdash; the climb is yours to pace.</dd></div>
+        <div class="sys"><dt>Blessings</dt><dd>Claim boons from the old powers still lingering below. Stack and chain them into a build that turns desperation into dominance.</dd></div>
+      </dl>
+
+      <div class="beats">
+        <div class="beat reveal"><p class="b-no">i</p><h3>Block, then punish</h3><p>Soften a blow, or release on the instant of contact for a perfect parry that opens the enemy wide.</p></div>
+        <div class="beat reveal"><p class="b-no">ii</p><h3>Dash through death</h3><p>Burst across the room with invulnerability frames. Spacing is survival.</p></div>
+        <div class="beat reveal"><p class="b-no">iii</p><h3>Weapons &amp; aspects</h3><p>Open each run with a different armament and a run-defining aspect that bends how it fights.</p></div>
+      </div>
+
+      <figure class="shot reveal" style="margin-top:46px;">
+        <img src="./img/shot2.png" alt="The blessing picker: three boons offered — Phantom Step, Shadow Cut, Nightwind Sigil — chosen by number key." loading="lazy" />
+        <figcaption>A blessing offered between the fighting &mdash; the run takes shape.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== THE DOOR ===================== -->
+  <section class="door-end">
+    <div class="shaft">
+      <h2>The door is open.</h2>
+      <p>Wishlist ASHMOURN, and be there when the descent begins.</p>
+      <a class="cta" href="#" id="steam-link-2">Wishlist on Steam <span class="arr">&rarr;</span></a>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <div class="title-sm">ASHMOURN</div>
-  <div>&copy; 2026 Ashmourn. All rights reserved.</div>
+  <div class="shaft">
+    <span class="mark">Ashmourn</span>
+    <div class="meta-row">
+      <span>Parry &amp; dash combat</span> &nbsp;·&nbsp; <span>Five cursed biomes</span> &nbsp;·&nbsp; <span>Full controller support</span> &nbsp;·&nbsp; <span>Six languages</span>
+    </div>
+    <p style="margin-top:18px;">&copy; 2026 Ashmourn. All rights reserved.</p>
+  </div>
 </footer>
 
 <script>
-  // Drop the real Steam app URL here once the store page is live, e.g.
-  // https://store.steampowered.com/app/XXXXXXX/Ashmourn/
+  // ---- Steam link: drop the live store URL here once the page exists ----
   var STEAM_URL = "";
-  if (STEAM_URL) {
-    document.getElementById("steam-link").href = STEAM_URL;
-    document.getElementById("steam-link-2").href = STEAM_URL;
-  }
+  if (STEAM_URL) ["steam-link","steam-link-2"].forEach(function(id){ document.getElementById(id).href = STEAM_URL; });
+
+  // ---- Embers: build a modest field; skip entirely if motion is reduced ----
+  (function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var layer = document.querySelector('.embers');
+    if (!layer) return;
+    var N = 16;
+    for (var i = 0; i < N; i++) {
+      var e = document.createElement('i');
+      var dur = 9 + Math.random() * 11;        // 9–20s rise
+      var delay = -Math.random() * dur;        // desync start
+      e.style.left = (Math.random() * 100) + 'vw';
+      e.style.animationDuration = dur + 's';
+      e.style.animationDelay = delay + 's';
+      e.style.setProperty('--drift', (Math.random() * 48 - 24) + 'px');
+      var s = 2 + Math.random() * 2;
+      e.style.width = e.style.height = s + 'px';
+      layer.appendChild(e);
+    }
+  })();
+
+  // ---- Scroll reveal: one quiet entrance per block ----
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function(el){ el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
 </script>
 </body>
 </html>
