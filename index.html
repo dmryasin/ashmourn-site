@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ASHMOURN — a hand-crafted 2D roguelike</title>
+<meta name="description" content="ASHMOURN is a hand-crafted 2D roguelike of relentless combat and deep build-craft. Parry, dash and unleash god-given boons across five cursed biomes that reshape every run." />
+
+<!-- Open Graph / social cards -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ASHMOURN" />
+<meta property="og:description" content="Death is not the wall — it is the door. A hand-crafted 2D roguelike of relentless combat and deep build-craft." />
+<meta property="og:image" content="./img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gold: #d4a55a;
+    --gold-bright: #f0c674;
+    --ink: #0a0510;
+    --ink-2: #140b1c;
+    --ink-3: #1c1226;
+    --text: #e8dccb;
+    --muted: #a88a5e;
+    --ember: #ff6a3d;
+    --max: 1120px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .display { font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
+  a { color: var(--gold-bright); text-decoration: none; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  .section { padding: 88px 0; }
+  .eyebrow { color: var(--gold); font-size: 13px; letter-spacing: 0.32em; text-transform: uppercase; margin-bottom: 14px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 38%, rgba(212,165,90,0.16), transparent 70%),
+      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255,106,61,0.12), transparent 70%),
+      linear-gradient(180deg, #06030b 0%, var(--ink) 55%, #06030b 100%);
+    overflow: hidden;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, rgba(212,165,90,0.05) 1px, transparent 1px);
+    background-size: 26px 26px; opacity: 0.5; pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 2; padding: 24px; }
+  .title {
+    font-size: clamp(56px, 12vw, 132px);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(212,165,90,0.55), 0 0 8px rgba(212,165,90,0.8);
+    line-height: 1; margin-bottom: 18px;
+  }
+  .tagline {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(16px, 2.6vw, 24px);
+    color: var(--text); font-style: italic; opacity: 0.92; margin-bottom: 10px;
+  }
+  .subtag { color: var(--muted); max-width: 620px; margin: 0 auto 34px; font-size: 16px; }
+  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 30px; border-radius: 6px; font-weight: 600; font-size: 15px;
+    border: 1px solid transparent; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    color: #1a0f06; box-shadow: 0 6px 28px rgba(212,165,90,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(212,165,90,0.5); }
+  .btn-ghost { border-color: rgba(212,165,90,0.4); color: var(--gold-bright); }
+  .btn-ghost:hover { border-color: var(--gold); background: rgba(212,165,90,0.08); }
+  .badges { margin-top: 30px; color: var(--muted); font-size: 13px; letter-spacing: 0.06em; }
+  .badges span { margin: 0 8px; }
+
+  /* ===== FEATURES ===== */
+  .grid { display: grid; gap: 22px; }
+  .features { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .card {
+    background: linear-gradient(180deg, var(--ink-2), var(--ink-3));
+    border: 1px solid rgba(212,165,90,0.16); border-radius: 12px; padding: 26px;
+  }
+  .card h3 { color: var(--gold-bright); font-size: 19px; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: 15px; }
+  .card .rune { font-size: 26px; margin-bottom: 12px; display: block; }
+
+  h2.section-title { font-size: clamp(28px, 5vw, 40px); color: var(--text); margin-bottom: 12px; }
+  .section-lead { color: var(--muted); max-width: 640px; margin-bottom: 40px; }
+
+  /* ===== BIOMES ===== */
+  .biomes { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .biome { border-radius: 12px; padding: 24px 22px; border: 1px solid rgba(212,165,90,0.14); position: relative; overflow: hidden; }
+  .biome h3 { font-size: 20px; margin-bottom: 6px; }
+  .biome p { font-size: 14px; color: var(--muted); }
+  .b1 { background: linear-gradient(160deg, #2a0f08, #160a12); }
+  .b1 h3 { color: #ff8a5a; }
+  .b2 { background: linear-gradient(160deg, #0c2018, #0a1014); }
+  .b2 h3 { color: #6fd0a8; }
+  .b3 { background: linear-gradient(160deg, #241c08, #140f08); }
+  .b3 h3 { color: #e8c267; }
+  .b4 { background: linear-gradient(160deg, #160f24, #0c0a16); }
+  .b4 h3 { color: #b292ff; }
+  .b5 { background: linear-gradient(160deg, #241608, #1a0e08); }
+  .b5 h3 { color: #ffb05a; }
+
+  /* ===== GALLERY ===== */
+  .gallery { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .shot {
+    aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(212,165,90,0.18); background: #06030b;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .shot .ph { color: #4a3c2a; font-size: 13px; letter-spacing: 0.1em; }
+
+  /* ===== CTA STRIP ===== */
+  .cta-strip {
+    text-align: center;
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(255,106,61,0.14), transparent 70%),
+      linear-gradient(180deg, var(--ink-2), var(--ink));
+    border-top: 1px solid rgba(212,165,90,0.16);
+    border-bottom: 1px solid rgba(212,165,90,0.16);
+  }
+
+  footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: 13px; }
+  footer .title-sm { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 0.2em; font-size: 16px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="title">ASHMOURN</div>
+    <p class="tagline">&ldquo;Death is not the wall &mdash; it is the door.&rdquo;</p>
+    <p class="subtag">A hand-crafted 2D roguelike of relentless combat and deep build-craft. Fall, grow stronger, and break the false dawn.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#" id="steam-link">Wishlist on Steam</a>
+      <a class="btn btn-ghost" href="#features">Learn more</a>
+    </div>
+    <div class="badges">
+      <span>⚔ Parry &amp; dash combat</span>·<span>🗺 5 cursed biomes</span>·<span>🎮 Full controller support</span>·<span>🌐 6 languages</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== FEATURES ===================== -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="eyebrow">What awaits below</div>
+    <h2 class="section-title">Every death feeds the next descent</h2>
+    <p class="section-lead">ASHMOURN remakes itself each time you fall &mdash; new rooms, new hazards, new ambushes &mdash; while the power you carry out makes the next run reach deeper.</p>
+    <div class="grid features">
+      <div class="card"><span class="rune">⚔</span><h3>Combat with teeth</h3><p>Block to soften a blow, or release on the instant of contact for a perfect parry. Dash through danger with invulnerability frames &mdash; spacing is survival.</p></div>
+      <div class="card"><span class="rune">🎲</span><h3>A run that never repeats</h3><p>Procedural floor topologies, run mutators that trade danger for spoils, elite hunts, sieges and hidden bombable rooms.</p></div>
+      <div class="card"><span class="rune">✦</span><h3>Boons of forgotten powers</h3><p>Claim blessings from the old powers below. Stack and chain them into build-defining synergies that turn desperation into dominance.</p></div>
+      <div class="card"><span class="rune">🌑</span><h3>Grow beyond death</h3><p>Spend the Darkness you carry out on permanent upgrades, then raise the Heat to make the underworld bite back for greater rewards.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BIOMES ===================== -->
+<section class="section" style="background:linear-gradient(180deg,var(--ink),#070410);">
+  <div class="wrap">
+    <div class="eyebrow">One descent</div>
+    <h2 class="section-title">Five cursed biomes</h2>
+    <p class="section-lead">Each layer has its own enemies, hazards and identity &mdash; from molten halls to the final, false light.</p>
+    <div class="grid biomes">
+      <div class="biome b1"><h3>Cinderdeep</h3><p>Molten halls and lava fissures.</p></div>
+      <div class="biome b2"><h3>Palemire</h3><p>The drowned, fog-choked deep.</p></div>
+      <div class="biome b3"><h3>Gilthollow</h3><p>Gilded ruin and greed.</p></div>
+      <div class="biome b4"><h3>Duskspire</h3><p>Spire-shadows and silence.</p></div>
+      <div class="biome b5"><h3>Sunmourn</h3><p>The false dawn waits.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALLERY ===================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow">Screens</div>
+    <h2 class="section-title">From the descent</h2>
+    <p class="section-lead">Captured in-engine.</p>
+    <div class="grid gallery" id="gallery">
+      <div class="shot"><img src="./img/shot1.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 1</span>'"></div>
+      <div class="shot"><img src="./img/shot2.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 2</span>'"></div>
+      <div class="shot"><img src="./img/shot3.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 3</span>'"></div>
+      <div class="shot"><img src="./img/shot4.png" alt="ASHMOURN screenshot" onerror="this.parentNode.innerHTML='<span class=ph>SCREENSHOT 4</span>'"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section cta-strip">
+  <div class="wrap">
+    <h2 class="section-title">The door is open.</h2>
+    <p class="section-lead" style="margin:0 auto 30px;">Wishlist ASHMOURN and be there when the descent begins.</p>
+    <a class="btn btn-primary" href="#" id="steam-link-2">Wishlist on Steam</a>
+  </div>
+</section>
+
+<footer>
+  <div class="title-sm">ASHMOURN</div>
+  <div>&copy; 2026 Ashmourn. All rights reserved.</div>
+</footer>
+
+<script>
+  // Drop the real Steam app URL here once the store page is live, e.g.
+  // https://store.steampowered.com/app/XXXXXXX/Ashmourn/
+  var STEAM_URL = "";
+  if (STEAM_URL) {
+    document.getElementById("steam-link").href = STEAM_URL;
+    document.getElementById("steam-link-2").href = STEAM_URL;
+  }
+</script>
+</body>
+</html>
